@@ -30,7 +30,7 @@ Point you browser to [http://localhost:3000](http://localhost:3000)
 - Provides a bi-directional communication channel between a client and a server.
 - Most realtime chat systems are architected around sockets.
 
-#### Socket.IO
+#### Socket.io
 - Composed of two parts:
   + A server that mounts on the Node.JS HTTP Server: `socket.io`
   + A client library that loads on the browser side: `socket.io-client`

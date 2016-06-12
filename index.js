@@ -1,3 +1,7 @@
+/**
+ * Server-side
+ */
+
 // Initializes app to be a function handler using Express.
 var app  = require( 'express' )();
 
@@ -15,14 +19,17 @@ app.get( '/', function( req, res ){
 
 // Listen on the connection event for incoming sockets.
 io.on( 'connection', function( socket ){
-  console.log( 'A user was connected' );
 
-  socket.on( 'disconnect', function( msg ){
-    console.log( 'A user was disconnected' );
-  });
+  console.log( 'A user was connected' );
+  io.emit( 'user-connected' );
 
   socket.on( 'chat-message', function( msg ){
     io.emit( 'chat-message', msg );
+  });
+
+  socket.on( 'disconnect', function( msg ){
+    console.log( 'A user was disconnected' );
+    io.emit( 'user-disconnected' );
   });
 });
 

@@ -13,6 +13,9 @@
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
     </style>
+
+    <!-- Load the Tostr styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 </head>
 
 <body>
@@ -28,41 +31,58 @@
     <!-- Load jQuery -->
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 
+    <!-- Load the Tostr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
     <!-- Configure socket.io-client -->
     <script>
-        /**
-         * socket.io-client
-         *
-         * Load the socket.io-client, which exposes a `io` global, and then connect.
-         * NOTE: By default, the socket.io-client tries to connect to the host
-         * that serves the page.
-         */
-        var socket = io();
+    /**
+     * Client-side
+     */
+    
+    // Load the socket.io-client, which exposes a `io` global, and then connect.
+    * NOTE: By default, the socket.io-client tries to connect to the host
+    * that serves the page.
+    var socket = io();
 
-        // When the user types in a message, the server receives a chat message event.
-        $( 'form' ).submit( function() {
+    $(document).ready(function() {
+      // When the user types in a message, the server receives a chat message event.
+      $( 'form' ).submit( function() {
 
-            // Read the user inputted text.
-            var messageText = $( '#message-input' ).val();
+          // Read the user inputted text.
+          var messageText = $( '#message-input' ).val();
 
-            // Reject if the text is invalid.
-            if ( messageText.length < 1 ) {
-              console.log( 'Invalid input' );
-              return false;
-            }
-
-            // Emit the 'chat-message' event.
-            socket.emit( 'chat-message', messageText );
-
-            // Clear the field.
-            $( '#message-input' ).val( '' );
+          // Reject if the text is invalid.
+          if ( messageText.length < 1 ) {
+            console.log( 'Invalid input' );
             return false;
-        });
+          }
 
-        // Append the new message to the list upon 'chat-message' event.
-        socket.on( 'chat-message', function( msg ) {
-            $( '#messages' ).append( $( '<li>' ).text( msg ) );
-        });
+          // Emit the 'chat-message' event.
+          socket.emit( 'chat-message', messageText ); // To everyone.
+
+          // Clear the field.
+          $( '#message-input' ).val( '' );
+          return false;
+      });
+
+      // Append the new message to the list upon 'chat-message' event.
+      socket.on( 'chat-message', function( msg ) {
+          $( '#messages' ).append( $( '<li>' ).text( msg ) );
+      });
+
+      // Notify it when a user is connected.
+      socket.on( 'user-connected', function() {
+          toastr.info( 'user-connected' );
+          console.info( 'user-connected' );
+      });
+
+      // Notify it when a user is disconnected.
+      socket.on( 'user-disconnected', function() {
+          toastr.warning( 'user-disconnected' );
+          console.info( 'user-disconnected' );
+      });
+    });
     </script>
 </body>
 
