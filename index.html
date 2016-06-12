@@ -19,6 +19,10 @@
 </head>
 
 <body>
+    <header>
+      <h1 id="username"></h1>
+    </header>
+
     <ul id="messages"></ul>
     <form action="">
         <input id="message-input" autocomplete="off" />
@@ -39,13 +43,21 @@
     /**
      * Client-side
      */
-    
-    // Load the socket.io-client, which exposes a `io` global, and then connect.
-    * NOTE: By default, the socket.io-client tries to connect to the host
-    * that serves the page.
-    var socket = io();
 
-    $(document).ready(function() {
+    // Load the socket.io-client, which exposes a `io` global, and then connect.
+    // NOTE: By default, the socket.io-client tries to connect to the host
+    // that serves the page.
+    var socket   = io();
+    var username = '';
+
+    $( document ).ready( function() {
+
+      // Ask the user for a username.
+      username = prompt( "Username: " );
+
+      // Show the username at the top of the page.
+      $( '#username' ).html( username );
+
       // When the user types in a message, the server receives a chat message event.
       $( 'form' ).submit( function() {
 
@@ -73,13 +85,13 @@
 
       // Notify it when a user is connected.
       socket.on( 'user-connected', function() {
-          toastr.info( 'user-connected' );
+          toastr.info( 'A user joinded' );
           console.info( 'user-connected' );
       });
 
       // Notify it when a user is disconnected.
       socket.on( 'user-disconnected', function() {
-          toastr.warning( 'user-disconnected' );
+          toastr.warning( 'A user left' );
           console.info( 'user-disconnected' );
       });
     });
