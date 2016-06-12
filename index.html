@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
-  <head>
+
+<head>
     <title>Socket.IO chat</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -12,24 +13,57 @@
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
     </style>
-  </head>
-  <body>
+</head>
+
+<body>
     <ul id="messages"></ul>
     <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
+        <input id="message-input" autocomplete="off" />
+        <button>Send</button>
     </form>
+
+    <!-- Load Socket.io -->
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+
+    <!-- Load jQuery -->
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+
+    <!-- Configure socket.io-client -->
     <script>
-      var socket = io();
-      $('form').submit(function(){
-        socket.emit('chat message', $('#m').val());
-        $('#m').val('');
-        return false;
-      });
-      socket.on('chat message', function(msg){
-        $('#messages').append($('<li>').text(msg));
-      });
+        /**
+         * socket.io-client
+         *
+         * Load the socket.io-client, which exposes a `io` global, and then connect.
+         * NOTE: By default, the socket.io-client tries to connect to the host
+         * that serves the page.
+         */
+        var socket = io();
+
+        // When the user types in a message, the server receives a chat message event.
+        $( 'form' ).submit( function() {
+
+            // Read the user inputted text.
+            var messageText = $( '#message-input' ).val();
+
+            // Reject if the text is invalid.
+            if ( messageText.length < 1 ) {
+              console.log( 'Invalid input' );
+              return false;
+            }
+
+            // Emit the 'chat-message' event.
+            socket.emit( 'chat-message', messageText );
+
+            // Clear the field.
+            $( '#message-input' ).val( '' );
+            return false;
+        });
+
+        // Append the new message to the list upon 'chat-message' event.
+        socket.on( 'chat-message', function( msg ) {
+            $( '#messages' ).append( $( '<li>' ).text( msg ) );
+        });
     </script>
-  </body>
+</body>
+
 </html>
